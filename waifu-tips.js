@@ -21,12 +21,13 @@ function loadWidget(config) {
 			<div id="waifu-tips"></div>
 			<canvas id="live2d" width="800" height="800"></canvas>
 			<div id="waifu-tool">
-			<span class="fa fa-lg fa-home"></span>
-			<span class="fa fa-lg fa-comment"></span>
-			<span class="fa fa-lg fa-user-circle"></span>
-			<span class="fa fa-lg fa-street-view"></span>
-			<span class="fa fa-lg fa-camera-retro"></span>
-			<span class="fa fa-lg fa-times"></span>
+				<span class="fa fa-lg fa-comment"></span>
+				<span class="fa fa-lg fa-paper-plane"></span>
+				<span class="fa fa-lg fa-user-circle"></span>
+				<span class="fa fa-lg fa-street-view"></span>
+				<span class="fa fa-lg fa-camera-retro"></span>
+				<span class="fa fa-lg fa-info-circle"></span>
+				<span class="fa fa-lg fa-times"></span>
 			</div>
 		</div>`);
 	// https://stackoverflow.com/questions/24148403/trigger-css-transition-on-appended-element
@@ -57,6 +58,17 @@ function loadWidget(config) {
 	}, 1000);
 
 	(function registerEventListener() {
+		document.querySelector("#waifu-tool .fa-comment").addEventListener("click", showHitokoto);
+		document.querySelector("#waifu-tool .fa-paper-plane").addEventListener("click", () => {
+			if (window.Asteroids) {
+				if (!window.ASTEROIDSPLAYERS) window.ASTEROIDSPLAYERS = [];
+				window.ASTEROIDSPLAYERS.push(new Asteroids());
+			} else {
+				const script = document.createElement("script");
+				script.src = "https://cdn.jsdelivr.net/gh/stevenjoezhang/asteroids/asteroids.js";
+				document.head.appendChild(script);
+			}
+		});
 		document.querySelector("#waifu-tool .fa-user-circle").addEventListener("click", loadOtherModel);
 		document.querySelector("#waifu-tool .fa-street-view").addEventListener("click", loadRandModel);
 		document.querySelector("#waifu-tool .fa-camera-retro").addEventListener("click", () => {
@@ -64,9 +76,7 @@ function loadWidget(config) {
 			Live2D.captureName = "photo.png";
 			Live2D.captureFrame = true;
 		});
-		document.querySelector("#waifu-tool .fa-home").addEventListener("click", () => {
-			location='http://bk.wuyouheike.top'
-		});
+
 		document.querySelector("#waifu-tool .fa-times").addEventListener("click", () => {
 			localStorage.setItem("waifu-display", Date.now());
 			showMessage("愿你有一天能与重要的人重逢。", 2000, 11);
@@ -120,7 +130,7 @@ function loadWidget(config) {
 		fetch("https://v1.hitokoto.cn")
 			.then(response => response.json())
 			.then(result => {
-				const text = `这句一言来自 <span>「${result.from}」</span>，是 <span>${result.creator}</span> 在 hitokoto.cn 投稿的。`;
+				const text = ` <span>${result.creator}</span> `;
 				showMessage(result.hitokoto, 6000, 9);
 				setTimeout(() => {
 					showMessage(text, 4000, 9);
@@ -151,7 +161,7 @@ function loadWidget(config) {
 		if (modelId === null) {
 			// 首次访问加载 指定模型 的 指定材质
 			modelId = 6; // 模型 ID
-			modelTexturesId = 11; // 材质 ID
+			modelTexturesId = 16; // 材质 ID
 		}
 		loadModel(modelId, modelTexturesId);
 		fetch(waifuPath)
